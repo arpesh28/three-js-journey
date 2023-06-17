@@ -63,6 +63,36 @@ const sizes = {
   height: window.innerHeight,
 };
 
+window.addEventListener("resize", (event) => {
+  //  Update Window resize
+  sizes.width = window.innerWidth;
+  sizes.height = window.innerHeight;
+
+  //  Update camera
+  camera.aspect = sizes.width / sizes.height;
+  camera.updateProjectionMatrix();
+
+  //  Update renderer
+  renderer.setSize(sizes.width, sizes.height);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+});
+
+window.addEventListener("dblclick", (event) => {
+  const fullscreenElement =
+    document.fullscreenElement || document.webkitFullscreenElement;
+  if (!fullscreenElement) {
+    if (canvas.requestFullscreen()) {
+      canvas.requestFullscreen();
+    } else if (canvas.webkitRequestFullscreen) {
+      canvas.webkitRequestFullscreen();
+    }
+  } else {
+    document.exitFullscreen
+      ? document.exitFullscreen()
+      : document.webkitExitFullscreen();
+  }
+});
+
 /**
  * Camera
  */
@@ -78,7 +108,6 @@ camera.lookAt(mesh.position); // Look at a particular position
  */
 const controls = new OrbitControls(camera, canvas);
 controls.enableDamping = true;
-
 /**
  * Renderer
  */
@@ -86,6 +115,7 @@ const renderer = new THREE.WebGLRenderer({
   canvas: canvas,
 });
 renderer.setSize(sizes.width, sizes.height);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
 /**
  * Animations
