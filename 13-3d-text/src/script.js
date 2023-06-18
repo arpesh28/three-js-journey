@@ -21,7 +21,7 @@ const scene = new THREE.Scene();
  * Textures
  */
 const textureLoader = new THREE.TextureLoader();
-const matCapTexture = textureLoader.load("/textures/matcaps/8.png");
+const matCapTexture = textureLoader.load("/textures/matcaps/9.png");
 /**
  * Fonts
  */
@@ -79,6 +79,7 @@ controls.enableRotate = false;
 const renderer = new THREE.WebGLRenderer({
   canvas: canvas,
 });
+renderer.setClearColor("#14181f");
 renderer.setSize(sizes.width, sizes.height);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
