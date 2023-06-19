@@ -3,6 +3,13 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import * as dat from "lil-gui";
 
 /**
+ * Textures
+ */
+const textureLoader = new THREE.TextureLoader();
+const backedShadow = textureLoader.load("/textures/bakedShadow.jpg");
+const simpleShadow = textureLoader.load("/textures/simpleShadow.jpg");
+
+/**
  * Base
  */
 // Debug
@@ -99,6 +106,18 @@ plane.receiveShadow = true;
 
 scene.add(sphere, plane);
 
+const sphereShadow = new THREE.Mesh(
+  new THREE.PlaneGeometry(1.5, 1.5),
+  new THREE.MeshBasicMaterial({
+    alphaMap: simpleShadow,
+    transparent: true,
+    color: 0x000000,
+  })
+);
+sphereShadow.rotation.x = -Math.PI * 0.5;
+sphereShadow.position.y = plane.position.y + 0.01;
+scene.add(sphereShadow);
+
 /**
  * Sizes
  */
@@ -157,6 +176,16 @@ const clock = new THREE.Clock();
 
 const tick = () => {
   const elapsedTime = clock.getElapsedTime();
+
+  //  Update the sphere
+  sphere.position.x = Math.sin(elapsedTime) * 2;
+  sphere.position.z = Math.cos(elapsedTime) * 2;
+  sphere.position.y = Math.abs(Math.sin(elapsedTime * 2.5));
+
+  //  Update the shadow
+  sphereShadow.position.x = sphere.position.x;
+  sphereShadow.position.z = sphere.position.z;
+  sphereShadow.material.opacity = (1 - sphere.position.y) * 0.3;
 
   // Update controls
   controls.update();
