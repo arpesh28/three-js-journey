@@ -20,6 +20,7 @@ scene.fog = fog;
  * Textures
  */
 const textureLoader = new THREE.TextureLoader();
+const particleTexture = textureLoader.load("/textures/particles/1.png");
 
 const wallColorTexture = textureLoader.load("/textures/bricks/color.jpg");
 const wallNormalTexture = textureLoader.load("/textures/bricks/normal.jpg");
@@ -60,6 +61,38 @@ const doorHeightTexture = textureLoader.load("/textures/door/height.jpg");
 const doorMetalnessTexture = textureLoader.load("/textures/door/metalness.jpg");
 const doorNormalTexture = textureLoader.load("/textures/door/normal.jpg");
 const doorRoughnessTexture = textureLoader.load("/textures/door/roughness.jpg");
+
+/**
+ * ===>> Start Particles
+ */
+
+const count = 1000;
+const vertices = new Float32Array(count * 3);
+
+for (let i = 0; i < count * 3; i++) {
+  vertices[i] = (Math.random() - 0.5) * 20;
+}
+const particleGeometry = new THREE.BufferGeometry();
+particleGeometry.setAttribute(
+  "position",
+  new THREE.BufferAttribute(vertices, 3)
+);
+const particleMaterial = new THREE.PointsMaterial({
+  size: 0.1,
+  sizeAttenuation: true,
+  color: "#eabc3a",
+  alphaMap: particleTexture,
+  transparent: true,
+  depthWrite: false,
+  // alphaTest: 0.001,
+  // blending: THREE.AdditiveBlending,
+});
+const particles = new THREE.Points(particleGeometry, particleMaterial);
+scene.add(particles);
+
+/**
+ * ===>> End Particles
+ */
 
 /**
  * ===>> Start House
