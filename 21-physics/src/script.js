@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import * as dat from "lil-gui";
-import * as CANNON from "cannon";
+import * as CANNON from "cannon-es";
 
 /**
  * Debug
@@ -22,9 +22,18 @@ const debugObject = {
       z: (Math.random() - 0.5) * 3,
     });
   },
+  reset: () => {
+    for (const object of objectToUpdate) {
+      object.body.removeEventListener("collide", playHitSound);
+      world.removeBody(object.body);
+      scene.remove(object.mesh);
+    }
+    objectToUpdate.splice(0, objectToUpdate.length);
+  },
 };
 gui.add(debugObject, "createSphere");
 gui.add(debugObject, "createBox");
+gui.add(debugObject, "reset");
 
 /**
  * Base
@@ -34,6 +43,19 @@ const canvas = document.querySelector("canvas.webgl");
 
 // Scene
 const scene = new THREE.Scene();
+
+/**
+ * Sounds
+ */
+const hitSound = new Audio("/sounds/hit.mp3");
+const playHitSound = (collision) => {
+  const impactStrength = collision.contact.getImpactVelocityAlongNormal();
+  if (impactStrength > 1.5) {
+    hitSound.volume = Math.random();
+    hitSound.currentTime = 0;
+    hitSound.play();
+  }
+};
 
 /**
  * Textures
@@ -54,6 +76,8 @@ const environmentMapTexture = cubeTextureLoader.load([
  * Physics World
  */
 const world = new CANNON.World();
+world.broadphase = new CANNON.SAPBroadphase(world); // For optimization of collision testing
+world.allowSleep = true; // Collision testing won't be done on stationary objects unless an external force is applied to it (Optimization   )
 world.gravity.set(0, -9.82, 0); // We want the gravity to be on the Negative Y-axis so that it falls down. 9.82 is the gravity constant of Earth
 
 //  Materials (Materials decide the physic properties)
@@ -228,6 +252,7 @@ const createSphere = (radius, position) => {
     material: defaultMaterial,
   });
   body.position.copy(position);
+  body.addEventListener("collide", playHitSound);
   world.addBody(body);
 
   //    Save in objects to update
@@ -256,6 +281,7 @@ const createBox = (width, height, depth, position) => {
     material: defaultMaterial,
   });
   body.position.copy(position);
+  body.addEventListener("collide", playHitSound);
   world.addBody(body);
 
   objectToUpdate.push({ mesh, body });
