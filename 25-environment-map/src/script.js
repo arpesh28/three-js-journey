@@ -52,6 +52,7 @@ gui
   .onChange(updateAllMaterials);
 gui.add(scene, "backgroundBlurriness").min(0).max(1).step(0.001);
 gui.add(scene, "backgroundIntensity").min(0).max(10).step(0.001);
+
 //  =====> LDR(Low Dynamic Range) cube texture
 // const environmentMap = cubeTextureLoader.load([
 //   "/environmentMaps/0/px.png",
