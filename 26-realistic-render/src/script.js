@@ -118,6 +118,7 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
  * Tone Mapping
  */
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 3;
 
 gui.add(renderer, "toneMapping", {
   No: THREE.NoToneMapping,
@@ -126,6 +127,7 @@ gui.add(renderer, "toneMapping", {
   Cineon: THREE.CineonToneMapping,
   ACESFilmic: THREE.ACESFilmicToneMapping,
 });
+gui.add(renderer, "toneMappingExposure", 0, 10, 0.001);
 
 /**
  * Animate
