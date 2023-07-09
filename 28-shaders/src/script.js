@@ -48,6 +48,7 @@ const material = new THREE.ShaderMaterial({
     uTexture: { value: flagTexture },
     uElevation: { value: 0.8 },
   },
+  side: THREE.DoubleSide,
 });
 
 gui
