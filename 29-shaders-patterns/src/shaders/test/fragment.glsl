@@ -1,7 +1,17 @@
+#define PI 3.1415926535897932384626433832795
+
 varying vec2 vUv;
 
 float random (vec2 st) {
     return fract(sin(dot(st.xy, vec2(12.9898,78.233))) * 43758.5453123);
+}
+
+vec2 rotate(vec2 uv, float rotation, vec2 mid)
+{
+    return vec2(
+      cos(rotation) * (uv.x - mid.x) + sin(rotation) * (uv.y - mid.y) + mid.x,
+      cos(rotation) * (uv.y - mid.y) - sin(rotation) * (uv.x - mid.x) + mid.y
+    );
 }
 
 void main()
@@ -112,11 +122,24 @@ void main()
     // float strength = 0.015/distance(vec2(0.5),vUv) ; // star pattern
     
     // Pattern 30
-    vec2 gridUv = vec2(
-        vUv.x,
-        vUv.y*5.0-2.0
-    );
-    float strength = 0.2/distance(vec2(0.5),gridUv) ; 
+    // vec2 lightUv = vec2(
+    //     vUv.x,
+    //     vUv.y*5.0-2.0
+    // );
+    // float strength = 0.2/distance(vec2(0.5),lightUv) ; 
+
+    // Pattern 31
+    // vec2 lightUvX = vec2(vUv.x,vUv.y*5.0-2.0);
+    // float strength = (0.1 / distance(vec2(0.5),lightUvX))-.3; 
+    // vec2 lightUvY = vec2(vUv.x*5.0-2.0,vUv.y);
+    // strength += (0.1 / distance(vec2(0.5),lightUvY)-.3)*.8;
+
+    // Pattern 32
+    vec2 rotateUv = rotate(vUv,PI*.25,vec2(0.5));
+    vec2 lightUvX = vec2(rotateUv.x,rotateUv.y*5.0-2.0);
+    float strength = (0.1 / distance(vec2(0.5),lightUvX))-.3; 
+    vec2 lightUvY = vec2(rotateUv.x*5.0-2.0,rotateUv.y);
+    strength += (0.1 / distance(vec2(0.5),lightUvY)-.3)*.8;
 
     gl_FragColor = vec4(vec3(strength), 1.0);
 }
