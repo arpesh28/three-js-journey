@@ -21,6 +21,25 @@ const canvas = document.querySelector("canvas.webgl");
 // Scene
 const scene = new THREE.Scene();
 
+// Texture Loader
+const cubeTexture = new THREE.CubeTextureLoader().load([
+  "/textures/sky/01/px.png",
+  "/textures/sky/01/nx.png",
+  "/textures/sky/01/py.png",
+  "/textures/sky/01/ny.png",
+  "/textures/sky/01/pz.png",
+  "/textures/sky/01/nz.png",
+]);
+
+const skyboxMaterial = new THREE.MeshBasicMaterial({
+  map: cubeTexture,
+  side: THREE.BackSide,
+});
+
+const skyboxGeometry = new THREE.BoxGeometry(100, 100, 100);
+const skyboxMesh = new THREE.Mesh(skyboxGeometry, skyboxMaterial);
+scene.add(skyboxMesh);
+
 /**
  * Water
  */
@@ -166,7 +185,7 @@ scene.add(water);
 /**
  * Lights
  */
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
+const ambientLight = new THREE.AmbientLight(0xffffff, 1);
 scene.add(ambientLight);
 
 /**
