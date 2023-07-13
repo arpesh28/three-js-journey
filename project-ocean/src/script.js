@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import * as dat from "lil-gui";
 
 //  Shaders
@@ -20,6 +21,24 @@ const canvas = document.querySelector("canvas.webgl");
 
 // Scene
 const scene = new THREE.Scene();
+
+/**
+ * Models
+ */
+let mixer = null;
+let ship = null;
+const gltfLoader = new GLTFLoader();
+gltfLoader.load("/models/ship/scene.gltf", (gltf) => {
+  //  Animation Mixer (Player for animating the gltf model)
+  mixer = new THREE.AnimationMixer(gltf.scene);
+  console.log(gltf);
+  gltf.scene.receiveShadow = true;
+  gltf.scene.rotation.set(0, 1.5, 0);
+  gltf.scene.scale.set(0.15, 0.15, 0.15);
+  // gltf.scene.position.set(0, 0.1, 0);
+  ship = gltf.scene;
+  scene.add(ship);
+});
 
 // Texture Loader
 const cubeTexture = new THREE.CubeTextureLoader().load([
@@ -78,7 +97,12 @@ const waterMaterial = new THREE.ShaderMaterial({
     uFogColor: { value: new THREE.Color(debugObject.fogColor) },
     uFogNear: { value: 8.9 },
     uFogFar: { value: 35.27 },
+
+    //  Light
+    uRefractionRatio: { value: 0.4 },
+    uDirectionalLights: { value: new THREE.Vector3(1, 0, 2) },
   },
+  side: THREE.DoubleSide,
 });
 
 //  Debug
@@ -184,8 +208,9 @@ scene.add(water);
 /**
  * Lights
  */
-const ambientLight = new THREE.AmbientLight(0xffffff, 1);
-scene.add(ambientLight);
+const directionalLight = new THREE.DirectionalLight(0xffffff, 3.0); // Adjust intensity and color as needed
+directionalLight.position.set(1, 2, 0); // Set the position of the light
+scene.add(directionalLight);
 
 /**
  * Sizes
@@ -219,7 +244,7 @@ const camera = new THREE.PerspectiveCamera(
   0.1,
   100
 );
-camera.position.set(1, 1, 1);
+camera.position.set(1, 1, 2);
 scene.add(camera);
 
 // Controls
@@ -245,6 +270,15 @@ const tick = () => {
 
   // Update shaders
   water.material.uniforms.uTime.value = elapsedTime;
+
+  // Update ship
+  if (ship) {
+    ship.rotation.x = Math.sin(elapsedTime) * 0.2;
+    ship.rotation.x = -Math.sin(elapsedTime) * 0.15;
+    ship.rotation.y = Math.cos(elapsedTime) * 0.15;
+    ship.position.y = Math.sin(elapsedTime) * 0.05 + 0.1;
+    // ship.rotation.x = Math.sin(elapsedTime) * 0.2;
+  }
 
   // Update controls
   controls.update();

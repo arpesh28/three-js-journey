@@ -8,8 +8,10 @@ uniform float uSmallWavesFrequency;
 uniform float uSmallWavesSpeed;
 uniform float uSmallWavesIterations;
 
+
 varying float vElevation;
 varying vec3 vFogPosition;
+varying vec3 vIncident;
 
 /*
 Perlin Noise Start
@@ -120,4 +122,5 @@ void main() {
 
     vElevation = elevation;
     vFogPosition = fogPosition;
+    // vIncident = incident;
 }
