@@ -25,11 +25,12 @@ const scene = new THREE.Scene();
  * Water
  */
 // Geometry
-const waterGeometry = new THREE.PlaneGeometry(30, 30, 512, 512);
+const waterGeometry = new THREE.PlaneGeometry(100, 100, 1024, 1024);
 
 //  Color
-debugObject.depthColor = "#013760";
+debugObject.depthColor = "#055694";
 debugObject.surfaceColor = "#0b86e5";
+debugObject.fogColor = "#132c3e";
 
 // Material
 const waterMaterial = new THREE.ShaderMaterial({
@@ -39,14 +40,14 @@ const waterMaterial = new THREE.ShaderMaterial({
     uTime: { value: 10 },
 
     //  Big Waves
-    uBigWavesElevation: { value: 0.2 },
-    uBigWavesFrequency: { value: new THREE.Vector2(1.8, 0.82) },
-    uBigWavesSpeed: { value: 1.01 },
+    uBigWavesElevation: { value: 0.37 },
+    uBigWavesFrequency: { value: new THREE.Vector2(0.67, 0.975) },
+    uBigWavesSpeed: { value: 0.66 },
 
     //  Small Waves
-    uSmallWavesElevation: { value: 0.14 },
-    uSmallWavesFrequency: { value: 3.35 },
-    uSmallWavesSpeed: { value: 0.45 },
+    uSmallWavesElevation: { value: 0.198 },
+    uSmallWavesFrequency: { value: 2.1 },
+    uSmallWavesSpeed: { value: 0.66 },
     uSmallWavesIterations: { value: 3 },
 
     //  Colors
@@ -54,6 +55,11 @@ const waterMaterial = new THREE.ShaderMaterial({
     uSurfaceColor: { value: new THREE.Color(debugObject.surfaceColor) },
     uColorOffset: { value: 0.1 },
     uColorMultiplier: { value: 4 },
+
+    //  Fog
+    uFogColor: { value: new THREE.Color(debugObject.fogColor) },
+    uFogNear: { value: 8.9 },
+    uFogFar: { value: 35.27 },
   },
 });
 
@@ -133,10 +139,35 @@ gui
   .step(0.01)
   .name("uColorMultiplier");
 
+gui
+  .addColor(debugObject, "fogColor")
+  .name("fogColor")
+  .onChange(() => {
+    waterMaterial.uniforms.uFogColor.value.set(debugObject.fogColor);
+  });
+gui
+  .add(waterMaterial.uniforms.uFogNear, "value")
+  .min(0)
+  .max(100)
+  .step(0.01)
+  .name("uFogNear");
+gui
+  .add(waterMaterial.uniforms.uFogFar, "value")
+  .min(0)
+  .max(100)
+  .step(0.01)
+  .name("uFogFar");
+
 // Mesh
 const water = new THREE.Mesh(waterGeometry, waterMaterial);
 water.rotation.x = -Math.PI * 0.5;
 scene.add(water);
+
+/**
+ * Lights
+ */
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
+scene.add(ambientLight);
 
 /**
  * Sizes

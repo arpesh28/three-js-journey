@@ -9,6 +9,7 @@ uniform float uSmallWavesSpeed;
 uniform float uSmallWavesIterations;
 
 varying float vElevation;
+varying vec3 vFogPosition;
 
 /*
 Perlin Noise Start
@@ -108,6 +109,8 @@ void main() {
         elevation -=abs(cnoise(vec3(modelPosition.xz*uSmallWavesFrequency*i,uTime*uSmallWavesSpeed))*uSmallWavesElevation)/i;
     }
 
+    vec3 fogPosition = vec3(modelMatrix*vec4(position,1.0));
+
 
     modelPosition.y+=elevation;
 
@@ -116,4 +119,5 @@ void main() {
     gl_Position = projectionPosition;
 
     vElevation = elevation;
+    vFogPosition = fogPosition;
 }
